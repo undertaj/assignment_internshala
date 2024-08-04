@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'core/routing/route_config.dart';
@@ -13,10 +14,12 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      // theme: OstelloTheme.lightTheme,
-      debugShowCheckedModeBanner: false,
-      routerConfig: _router,
+    return ProviderScope(
+      child: MaterialApp.router(
+        // theme: OstelloTheme.lightTheme,
+        debugShowCheckedModeBanner: false,
+        routerConfig: _router,
+      ),
     );
   }
 }

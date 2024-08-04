@@ -7,3 +7,5 @@ final internshipProvider = FutureProvider<Internship>((ref) async {
   final internshipRepository = InternshipRepository();
   return internshipRepository.fetchInternships();
 });
+
+StateProvider<int> filteredInternShipsCountProvider = StateProvider((ref) => 0);

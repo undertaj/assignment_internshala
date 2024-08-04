@@ -3,26 +3,37 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/filters/view/filter_screen.dart';
+import '../../features/filters/view/sub_filter_screen.dart';
 import '../../features/home/view/home_screen.dart';
 import '../../features/splash/view/splash_screen.dart';
 
 final router = GoRouter(
+  initialLocation: RouteConstants.splashScreenPath,
   routes: [
     //Initial Route is '/'
     GoRoute(
-        path: RouteContants.splashScreenPath,
-        name: RouteContants.splashScreenName,
-        builder: (context, state) => const SplashScreen(),
+      path: RouteConstants.splashScreenPath,
+      name: RouteConstants.splashScreenName,
+      builder: (context, state) => const SplashScreen(),
     ),
     GoRoute(
-        path: RouteContants.homeScreenPath,
-        name: RouteContants.homeScreenName,
-        builder: (context, state) => const HomeScreen(),
+      path: RouteConstants.homeScreenPath,
+      name: RouteConstants.homeScreenName,
+      builder: (context, state) => const HomeScreen(),
     ),
     GoRoute(
-      path: RouteContants.filterScreenName,
-      name: RouteContants.filterScreenName,
+      path: RouteConstants.filterScreenPath,
+      name: RouteConstants.filterScreenName,
       builder: (context, state) => const FilterScreen(),
+      routes: [
+        GoRoute(
+          path: RouteConstants.subFilterScreenPath,
+          name: RouteConstants.subFilterScreenName,
+          builder: (context, state) => SubFilterScreen(
+            filterType: state.extra as String,
+          ),
+        ),
+      ]
     ),
   ],
   errorPageBuilder: (context, state) => MaterialPage(
