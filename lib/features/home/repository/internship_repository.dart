@@ -10,7 +10,6 @@ class InternshipRepository {
 
   Future<Internship> fetchInternships() async {
     final response = await http.get(Uri.parse(ApiConstants.search_URL));
-    debugPrint(response.body);
     return Internship.fromJson(jsonDecode(response.body));
   }
 }

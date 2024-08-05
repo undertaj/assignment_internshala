@@ -7,182 +7,191 @@ import '../../../shared/global_controllers/filter_controller.dart';
 import '../../../const/value_constants.dart';
 import '../controller/sub_filter_controller.dart';
 
-class SubFilterScreen extends ConsumerStatefulWidget {
+class SubFilterScreen extends ConsumerWidget {
   final String filterType;
-  const SubFilterScreen({super.key, required this.filterType});
+  SubFilterScreen({super.key, required this.filterType});
 
   @override
-  ConsumerState<SubFilterScreen> createState() => _SubFilterScreenState();
-}
-
-class _SubFilterScreenState extends ConsumerState<SubFilterScreen> {
-  final TextEditingController _controller = TextEditingController();
-  late final StateController<List<String>> readProvider;
-  late final StateController<List<String>> watchProvider;
-
-  void func(bool value, int index){
-    if(value) {
-      if(widget.filterType == 'city') {
-        readProvider.state.add(ref.watch(filteredCityProvider.notifier).state[index]);
-      }
-      else {
-        readProvider.state.add(ref.watch(filteredProfileProvider.notifier).state[index]);
-      }
-    }
-    else {
-      if(widget.filterType == 'city') {
-        if(readProvider.state.contains(ref.watch(filteredCityProvider.notifier).state[index])) {
-          readProvider.state.remove(ref.watch(filteredCityProvider.notifier).state[index]);
-        }
-      }
-      else {
-        if(readProvider.state.contains(ref.watch(filteredProfileProvider.notifier).state[index])) {
-          readProvider.state.remove(ref.watch(filteredProfileProvider.notifier).state[index]);
-        }
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    readProvider = widget.filterType == 'city' ? ref.read(selectedCityProvider.notifier) : ref.read(selectedProfileProvider.notifier);
-    watchProvider = widget.filterType == 'city' ? ref.watch(selectedCityProvider.notifier): ref.watch(selectedProfileProvider.notifier);
+  Widget build(BuildContext context, WidgetRef ref) {
+    // readSelectedProvider = ref.read(selectedCityProvider.notifier);
+    final readSelectedProvider = filterType == 'city' ? ref.read(selectedCityProvider.notifier) : ref.read(selectedProfileProvider.notifier);
+    final watchSelectedProvider = filterType == 'city' ? ref.watch(selectedCityProvider): ref.watch(selectedProfileProvider);
+    final readFilterProvider = filterType == 'city' ? ref.read(filteredCityProvider.notifier) : ref.read(filteredProfileProvider.notifier);
+    final watchFilterProvider = filterType == 'city' ? ref.watch(filteredCityProvider) : ref.watch(filteredProfileProvider);
+    debugPrint(readSelectedProvider.state.toString());
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
         leading: const Icon(Icons.arrow_back),
-        title: Text(widget.filterType),
+        title: Text(filterType[0].toUpperCase()+filterType.substring(1)),
         actions: [
           TextButton(
               onPressed: (){
-                readProvider.state = [];
-                ref.read(filteredCityProvider.notifier).state = [];
-                ref.read(filteredProfileProvider.notifier).state = [];
-                context.pop();
+                readSelectedProvider.state = [];
+                readFilterProvider.state = filterType == 'city' ? Constants.cities : Constants.profiles;
               },
-              child: const Text('Clear all')),
-          TextButton(
-              onPressed: (){
-                if(widget.filterType == 'city') {
-                  ref.read(cityFilterProvider.notifier).state = readProvider.state;
-                }
-                else {
-                  ref.read(profileFilterProvider.notifier).state = readProvider.state;
-                }
-              },
-              child: const Text('Apply')),
+              child: const Text('Clear all', style: TextStyle(fontWeight: FontWeight.normal),)),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: TextButton(
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white
+             ),
+                onPressed: (){
+                  if(filterType == 'city') {
+                    ref.read(cityFilterProvider.notifier).state = readSelectedProvider.state;
+                  }
+                  else {
+                    ref.read(profileFilterProvider.notifier).state = readSelectedProvider.state;
+                  }
+                  context.pop();
+                },
+                child: const Text('Apply', style: TextStyle(fontWeight: FontWeight.w500),)),
+          ),
           const Icon(Icons.notifications),
         ],
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(50),
-          child: Container(
-            height: 50,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
+      ),
+      body: SubFilterBody(
+        filterType: filterType,
+        readSelectedProvider: readSelectedProvider,
+        watchSelectedProvider: watchSelectedProvider,
+        readFilterProvider: readFilterProvider,
+        watchFilterProvider: watchFilterProvider,
+      )
+    );
+  }
+}
+
+
+class SubFilterBody extends ConsumerWidget {
+
+  final String filterType;
+  final StateController<List<String>> readSelectedProvider;
+  final List<String> watchSelectedProvider;
+  final StateController<List<String>> readFilterProvider;
+  final List<String> watchFilterProvider;
+  const SubFilterBody({super.key,
+    required this.filterType,
+    required this.readSelectedProvider,
+    required this.watchSelectedProvider,
+    required this.readFilterProvider,
+    required this.watchFilterProvider,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
               children: [
-                for(int i = 0; i < watchProvider.state.length; i++)
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Chip(
-                      label: Text(readProvider.state[i]),
-                      onDeleted: () {
-                        readProvider.state.remove(readProvider.state[i]);
-                      },
+                TextField(
+                  decoration: InputDecoration(
+                    labelText: 'Search $filterType',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(4),
+                      borderSide: const BorderSide(color: Colors.blue),
                     ),
-                  )
+                    labelStyle: const TextStyle(color: Colors.blue),
+                  ),
+                  onChanged: (value) {
+                    debugPrint(value);
+                    List<String> values = filterType == 'city' ? Constants.cities : Constants.profiles;
+                    if(value == "") {
+                      readFilterProvider.state = values;
+                      return;
+                    }
+                    else {
+                      List<String> filteredValues = [];
+                      for(var val in values) {
+                        if(val.toLowerCase().startsWith(value.toLowerCase())) {
+                          filteredValues.add(val);
+                        }
+                      }
+                      for(var val in values) {
+                        if(!filteredValues.contains(val) && val.toLowerCase().contains(value.toLowerCase())) {
+                          filteredValues.add(val);
+                        }
+                      }
+                      readFilterProvider.state = filteredValues;
+                    }
+                  },
+                ),
+                Visibility(
+                  visible: watchSelectedProvider.isNotEmpty,
+                  maintainState: true,
+                  child: Container(
+                    height: 50,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: watchSelectedProvider.length,
+                      itemBuilder: (context, index) {
+                        return Chip(
+                          label: Text(watchSelectedProvider[index]),
+                          onDeleted: () {
+                            readSelectedProvider.state.remove(readSelectedProvider.state[index]);
+                          },
+                        );
+                      },
+
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
-
-        ),
-      ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            TextField(
-              controller: _controller,
-              decoration: InputDecoration(
-                labelText: 'Search ${widget.filterType}',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: const BorderSide(color: Colors.blue),
-                ),
-                labelStyle: const TextStyle(color: Colors.blue),
-              ),
-              onChanged: (value) {
-                if(widget.filterType == 'city') {
-                  List<String> filteredCities = [];
-                  for (var city in Constants.cities) {
-                    if (city.toLowerCase().contains(value.toLowerCase())) {
-                      filteredCities.add(city);
-                      break;
-                    }
-                  }
-                  ref.read(filteredCityProvider.notifier).state = filteredCities;
-                }
-                else {
-                  List<String> filteredProfiles = [];
-                  for (var profile in Constants.profiles) {
-                    if (profile.toLowerCase().contains(value.toLowerCase())) {
-                      filteredProfiles.add(profile);
-                      break;
-                    }
-                  }
-                  ref.read(filteredProfileProvider.notifier).state = filteredProfiles;
-                }
-              }
-            ),
-            const SizedBox(height: 10),
-            Expanded(
-              child:
-              ListView.builder(
-                itemCount: watchProvider.state.length,
+          const SizedBox(height: 10),
+          Expanded(
+            // height: 200,
+            // width: 200,
+            // color: Colors.grey,
+            child:
+            Padding(
+              padding: const EdgeInsets.only(left: 6.0),
+              child: ListView.builder(
+                itemCount: watchFilterProvider.length, //ref.watch(filterProvider)
                 itemBuilder: (context, index) {
-                  return ListTile(
-                    leading: Checkbox(
-                      value: (widget.filterType == 'city') ?
-                          watchProvider.state.contains(ref.watch(filteredCityProvider.notifier).state[index])
-                          :
-                          watchProvider.state.contains(ref.watch(filteredProfileProvider.notifier).state[index]),
-                      onChanged: (value) {
-                        if(value!) {
-                          if(widget.filterType == 'city') {
-                            readProvider.state.add(ref.watch(filteredCityProvider.notifier).state[index]);
-                          }
-                          else {
-                            readProvider.state.add(ref.watch(filteredProfileProvider.notifier).state[index]);
-                          }
-                        }
-                        else {
-                          if(widget.filterType == 'city') {
-                            if(readProvider.state.contains(ref.watch(filteredCityProvider.notifier).state[index])) {
-                              readProvider.state.remove(ref.watch(filteredCityProvider.notifier).state[index]);
-                            }
-                          }
-                          else {
-                            if(readProvider.state.contains(ref.watch(filteredProfileProvider.notifier).state[index])) {
-                              readProvider.state.remove(ref.watch(filteredProfileProvider.notifier).state[index]);
-                            }
-                          }
-                        }
-                      },
+                  debugPrint(readFilterProvider.state.length.toString()); //ref.read(filterProvider.notifier)
+                  return GestureDetector(
+                    onTap: (){},
+                    child: Row(
+                        children: [
+                          Checkbox(
+
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+                              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              value: watchSelectedProvider.contains(watchFilterProvider[index]),
+                              onChanged: (value) {
+                                debugPrint(value! ? "TRUED ${readFilterProvider.state[index]}" : "FALSED ${readFilterProvider.state[index]}");
+                                List<String> list = readSelectedProvider.state;
+                                if(value) {
+                                  // readSelectedProvider.update((state) => state.add(readFilterProvider.state[index]));
+                                  list.add(readFilterProvider.state[index]);
+                                  // readSelectedProvider.state.add(readFilterProvider.state[index]);
+                                }
+                                else {
+                                  // readSelectedProvider.update((state) => state.remove(readFilterProvider.state[index]));
+                                  list.remove(readFilterProvider.state[index]);
+                                  // readSelectedProvider.state.remove(readFilterProvider.state[index]);
+                                }
+                                readSelectedProvider.state = list;
+                              }
+                          ),
+                          Text(watchFilterProvider[index], style: const TextStyle(color: ColorConstants.greyColor)),
+                        ]
                     ),
-                    title: Text('Item $index'),
-                    onTap: (){
-                      bool value = (widget.filterType == 'city') ?
-                          readProvider.state.contains(ref.watch(filteredCityProvider.notifier).state[index])
-                          :
-                          readProvider.state.contains(ref.watch(filteredProfileProvider.notifier).state[index]);
-                      func(value,index);
-                    },
                   );
                 },
               ),
             ),
-          ]
-        ),
-      ),
+          ),
+        ]
     );
-
-
   }
 }
+

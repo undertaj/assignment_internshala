@@ -24,7 +24,7 @@ final router = GoRouter(
     GoRoute(
       path: RouteConstants.filterScreenPath,
       name: RouteConstants.filterScreenName,
-      builder: (context, state) => const FilterScreen(),
+      builder: (context, state) => FilterScreen(),
       routes: [
         GoRoute(
           path: RouteConstants.subFilterScreenPath,

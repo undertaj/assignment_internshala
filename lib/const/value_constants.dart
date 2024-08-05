@@ -1,6 +1,6 @@
 
 
-import 'package:flutter/material.dart';
+import 'dart:ui';
 
 class Constants {
   static const List<String> cities = [
@@ -22,4 +22,13 @@ class Constants {
     'Android App Development',
     'Product Management',
   ];
+}
+
+
+class ColorConstants {
+
+  static const Color primaryColor = Color(0xff008BDC);
+
+  static const Color greyColor = Color(0xff666666);
+
 }

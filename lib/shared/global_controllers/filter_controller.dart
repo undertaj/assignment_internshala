@@ -1,7 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../features/home/utils/enums.dart';
-
 ///Uses location_names field of Internship model
 StateProvider<List<String>> cityFilterProvider = StateProvider((ref) => []);
 
