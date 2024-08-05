@@ -8,21 +8,13 @@ import '../../../shared/global_controllers/filter_controller.dart';
 import '../components/internship_card.dart';
 import '../controller/internship_controller.dart';
 
-class HomeScreen extends ConsumerStatefulWidget {
-  const HomeScreen({super.key});
+class HomeScreen extends ConsumerWidget {
+  int? extra = 0;
+
+  HomeScreen({super.key, this.extra});
 
   @override
-  ConsumerState<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends ConsumerState<HomeScreen> {
-
-  @override
-  void initState() {
-    super.initState();
-  }
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -98,9 +90,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     }
                   }
                   debugPrint("Filtered Internships: ${filteredInternships.length}"   );
-                  // if(mounted) {
+                  // if(extra != null && extra == 1) {
                   //   ref.read(filteredInternShipsCountProvider.notifier).state = filteredInternships.length;
                   // }
+                  Future.delayed(const Duration(seconds: 2), () {
+                    ref.read(filteredInternShipsCountProvider.notifier).state = filteredInternships.length;
+                  });
                   return Expanded(
                     child: ListView.separated(
                       padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 0),

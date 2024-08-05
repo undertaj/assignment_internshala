@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/routing/route_contants.dart';
 import '../../../shared/global_controllers/filter_controller.dart';
 import '../../../const/value_constants.dart';
 import '../controller/sub_filter_controller.dart';
@@ -14,8 +15,8 @@ class SubFilterScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // readSelectedProvider = ref.read(selectedCityProvider.notifier);
-    final readSelectedProvider = filterType == 'city' ? ref.read(selectedCityProvider.notifier) : ref.read(selectedProfileProvider.notifier);
-    final watchSelectedProvider = filterType == 'city' ? ref.watch(selectedCityProvider): ref.watch(selectedProfileProvider);
+    final readSelectedProvider = filterType == 'city' ? ref.read(cityFilterProvider.notifier) : ref.read(profileFilterProvider.notifier);
+    final watchSelectedProvider = filterType == 'city' ? ref.watch(cityFilterProvider): ref.watch(profileFilterProvider);
     final readFilterProvider = filterType == 'city' ? ref.read(filteredCityProvider.notifier) : ref.read(filteredProfileProvider.notifier);
     final watchFilterProvider = filterType == 'city' ? ref.watch(filteredCityProvider) : ref.watch(filteredProfileProvider);
     debugPrint(readSelectedProvider.state.toString());
@@ -48,7 +49,7 @@ class SubFilterScreen extends ConsumerWidget {
                   else {
                     ref.read(profileFilterProvider.notifier).state = readSelectedProvider.state;
                   }
-                  context.pop();
+                  context.goNamed(RouteConstants.filterScreenName);
                 },
                 child: const Text('Apply', style: TextStyle(fontWeight: FontWeight.w500),)),
           ),
@@ -84,6 +85,7 @@ class SubFilterBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    debugPrint("Subfilter body build");
     return Column(
         children: [
           Padding(
@@ -124,18 +126,28 @@ class SubFilterBody extends ConsumerWidget {
                 ),
                 Visibility(
                   visible: watchSelectedProvider.isNotEmpty,
-                  maintainState: true,
+                  // maintainState: true,
                   child: Container(
                     height: 50,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemCount: watchSelectedProvider.length,
                       itemBuilder: (context, index) {
-                        return Chip(
-                          label: Text(watchSelectedProvider[index]),
-                          onDeleted: () {
-                            readSelectedProvider.state.remove(readSelectedProvider.state[index]);
-                          },
+                        debugPrint("Visibility List Builder");
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 3.0),
+                          child: Chip(
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                            backgroundColor: ColorConstants.primaryColor,
+                            deleteIcon: const Icon(Icons.close, color: Colors.white, size: 16,),
+                            labelStyle: const TextStyle(color: Colors.white, fontWeight: FontWeight.w400),
+                            label: Text(readSelectedProvider.state[index]),
+                            onDeleted: () {
+                              List<String> list = List<String>.from(readSelectedProvider.state);
+                              list.removeAt(index);
+                              readSelectedProvider.state = list;
+                            },
+                          ),
                         );
                       },
 
@@ -147,9 +159,6 @@ class SubFilterBody extends ConsumerWidget {
           ),
           const SizedBox(height: 10),
           Expanded(
-            // height: 200,
-            // width: 200,
-            // color: Colors.grey,
             child:
             Padding(
               padding: const EdgeInsets.only(left: 6.0),
@@ -157,27 +166,23 @@ class SubFilterBody extends ConsumerWidget {
                 itemCount: watchFilterProvider.length, //ref.watch(filterProvider)
                 itemBuilder: (context, index) {
                   debugPrint(readFilterProvider.state.length.toString()); //ref.read(filterProvider.notifier)
+                  debugPrint("checkbox List Builder");
                   return GestureDetector(
                     onTap: (){},
                     child: Row(
                         children: [
                           Checkbox(
-
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
                               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                               value: watchSelectedProvider.contains(watchFilterProvider[index]),
                               onChanged: (value) {
                                 debugPrint(value! ? "TRUED ${readFilterProvider.state[index]}" : "FALSED ${readFilterProvider.state[index]}");
-                                List<String> list = readSelectedProvider.state;
+                                List<String> list = List<String>.from(readSelectedProvider.state);
                                 if(value) {
-                                  // readSelectedProvider.update((state) => state.add(readFilterProvider.state[index]));
                                   list.add(readFilterProvider.state[index]);
-                                  // readSelectedProvider.state.add(readFilterProvider.state[index]);
                                 }
                                 else {
-                                  // readSelectedProvider.update((state) => state.remove(readFilterProvider.state[index]));
                                   list.remove(readFilterProvider.state[index]);
-                                  // readSelectedProvider.state.remove(readFilterProvider.state[index]);
                                 }
                                 readSelectedProvider.state = list;
                               }

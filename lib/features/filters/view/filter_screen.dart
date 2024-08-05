@@ -16,7 +16,7 @@ class FilterScreen extends ConsumerWidget {
     final selectedCityWatcher = ref.watch(cityFilterProvider);
     return PopScope(
       onPopInvoked: (_) {
-        context.goNamed(RouteConstants.homeScreenName);
+        context.pop(RouteConstants.homeScreenName);
       },
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -77,39 +77,47 @@ class FilterScreen extends ConsumerWidget {
                       children: [
                         Text(i == 0 ? 'PROFILE' : 'CITY', style: TextStyle(color: ColorConstants.greyColor.withOpacity(0.7), fontWeight: FontWeight.w500, fontSize: 11),),
                         const SizedBox(height: 5,),
-                        Visibility(
-                          visible: i == 0 ? selectedProfileWatcher.isNotEmpty : selectedCityWatcher.isNotEmpty,
-                          maintainState: true,
-                          child: ListView(
-                            scrollDirection: Axis.horizontal,
-                            children:
-                              i == 0 ?
-                              <Widget>[
-                                for(int j = 0; j < ref.read(profileFilterProvider.notifier).state.length; j++)
-                                  Chip(
-                                    label: Text(ref.read(profileFilterProvider.notifier).state[j]),
-                                    onDeleted: () {
-                                      ref.read(profileFilterProvider.notifier).state.remove(ref.read(profileFilterProvider.notifier).state[j]);
-                                    },
-                                  ),
-                              ]
-                                  :
-                              [
-                                for(int j = 0; j < ref.read(cityFilterProvider.notifier).state.length; j++)
-                                Chip(
-                                  label: Text(ref.read(cityFilterProvider.notifier).state[j]),
+                        Container(
+                          height: (i == 1 ? selectedCityWatcher.isNotEmpty : selectedProfileWatcher.isNotEmpty) ? 40 : 0,
+                          child: Visibility(
+                            visible: i == 1 ? selectedCityWatcher.isNotEmpty : selectedProfileWatcher.isNotEmpty,
+                            // maintainState: true,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: i == 1 ? ref.read(cityFilterProvider.notifier).state.length : ref.read(profileFilterProvider.notifier).state.length,
+                              itemBuilder: (context, index) => Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                                child: Chip(
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                                  backgroundColor: ColorConstants.primaryColor,
+                                  deleteIcon: const Icon(Icons.close, color: Colors.white, size: 16,),
+                                  labelStyle: const TextStyle(color: Colors.white, fontWeight: FontWeight.w400),
+                                  label: Text(i == 1 ? ref.read(cityFilterProvider.notifier).state[index] : ref.read(profileFilterProvider.notifier).state[index]),
                                   onDeleted: () {
-                                    ref.read(cityFilterProvider.notifier).state.remove(ref.read(cityFilterProvider.notifier).state[j]);
+                                    List<String> list;
+                                    if(i == 1) {
+                                      list = List<String>.from(ref.read(cityFilterProvider.notifier).state);
+                                    }
+                                    else {
+                                      list = List<String>.from(ref.read(profileFilterProvider.notifier).state);
+                                    }
+                                    list.removeAt(index);
+                                    if(i == 1) {
+                                      ref.read(cityFilterProvider.notifier).state = list;
+                                    }
+                                    else {
+                                      ref.read(profileFilterProvider.notifier).state = list;
+                                    }
                                   },
-                                )
-                              ],
-
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                         const SizedBox(height: 5,),
                         GestureDetector(
                           onTap: () {
-                            context.pushNamed(
+                            context.goNamed(
                                 RouteConstants.subFilterScreenName,
                                 extra: i == 0 ? 'profile' : 'city'
                             );
@@ -135,6 +143,7 @@ class FilterScreen extends ConsumerWidget {
                             onSelected: (value) {
                               ref.read(maxDurationFilterProvider.notifier).state = value as int;
                             },
+                              initialSelection: ref.read(maxDurationFilterProvider),
                               dropdownMenuEntries: const <DropdownMenuEntry>[
                                 DropdownMenuEntry(value: 1, label: '1',),
                                 DropdownMenuEntry(value: 2, label: '2',),
@@ -188,7 +197,7 @@ class FilterScreen extends ConsumerWidget {
                     ),
                   ),
                   onPressed: () {
-                    context.goNamed(RouteConstants.homeScreenName);
+                    context.goNamed(RouteConstants.homeScreenName, extra: 1);
                   },
                   child: const Padding(
                     padding: EdgeInsets.symmetric(vertical: 5,horizontal: 30),

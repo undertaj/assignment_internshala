@@ -19,7 +19,9 @@ final router = GoRouter(
     GoRoute(
       path: RouteConstants.homeScreenPath,
       name: RouteConstants.homeScreenName,
-      builder: (context, state) => const HomeScreen(),
+      builder: (context, state) => HomeScreen(
+        extra: state.extra as int?,
+      ),
     ),
     GoRoute(
       path: RouteConstants.filterScreenPath,

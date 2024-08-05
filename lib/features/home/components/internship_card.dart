@@ -72,7 +72,8 @@ class InternshipCard extends StatelessWidget {
                           Text(
                               internshipsMeta.locationNames!.join(", "),
                               style: const TextStyle(
-                                  fontSize: 13
+                                  fontSize: 13,
+                                  color: ColorConstants.greyColor
                               )
                           )
                         ]
@@ -85,7 +86,8 @@ class InternshipCard extends StatelessWidget {
                           Text(
                               internshipsMeta.startDate ?? "",
                               style: const TextStyle(
-                                  fontSize: 13
+                                  fontSize: 13,
+                                color: ColorConstants.greyColor
                               )
                           ),
                           SizedBox(width: 30,),
@@ -94,7 +96,8 @@ class InternshipCard extends StatelessWidget {
                           Text(
                               internshipsMeta.duration ?? "",
                               style: const TextStyle(
-                                  fontSize: 13
+                                  fontSize: 13,
+                                  color: ColorConstants.greyColor
                               )
                           ),
                         ]
@@ -107,7 +110,8 @@ class InternshipCard extends StatelessWidget {
                           Text(
                               internshipsMeta.stipend!.salary ?? "",
                               style: const TextStyle(
-                                  fontSize: 13
+                                  fontSize: 13,
+                                  color: ColorConstants.greyColor
                               )
                           )
                         ]
