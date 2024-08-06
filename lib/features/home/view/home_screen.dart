@@ -1,4 +1,5 @@
 import 'package:assignment/const/value_constants.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -20,13 +21,23 @@ class HomeScreen extends ConsumerWidget {
         elevation: 0,
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
-        leading: const Icon(Icons.menu),
+        leading: const Icon(Icons.menu_rounded,weight: 1),
         title: const Text('Internships'),
+        titleSpacing: -6,
+        leadingWidth: 55,
+        actionsIconTheme: IconThemeData(
+            color: Colors.black.withOpacity(0.7),
+          size: 20
+        ),
         actions: const [
-          Icon(Icons.search),
-          Icon(Icons.bookmark),
-          Icon(Icons.notifications),
-          Icon(Icons.chat_bubble_outline)
+          Icon(Icons.search, ),
+          SizedBox(width: 21,),
+          Icon(Icons.bookmark_border),
+          SizedBox(width: 9,),
+          Icon(Icons.notifications_none),
+          SizedBox(width: 9,),
+          Icon(Icons.chat_bubble_outline_outlined),
+          SizedBox(width: 17,),
         ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(80),
@@ -110,7 +121,7 @@ class HomeScreen extends ConsumerWidget {
                           Divider(
                             height: 10,
                             thickness: 10,
-                            color: Colors.grey[200],
+                            color: Colors.grey[100],
                           ),
                           Divider(color: ColorConstants.greyColor.withOpacity(0.1),height: 0,thickness: 1.5)
                         ],

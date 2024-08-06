@@ -24,13 +24,21 @@ class FilterScreen extends ConsumerWidget {
           elevation: 0,
           backgroundColor: Colors.white,
           foregroundColor: Colors.black,
-          leading: const Icon(Icons.menu),
           title: const Text('Filters'),
+          actionsIconTheme: IconThemeData(
+              color: Colors.black.withOpacity(0.7),
+              size: 20
+          ),
+          leading: const Icon(Icons.arrow_back),
+          titleSpacing: -6,
+          leadingWidth: 55,
           actions: const [
-            Icon(Icons.search),
-            Icon(Icons.bookmark),
-            Icon(Icons.notifications),
-            Icon(Icons.chat_bubble_outline)
+            Icon(Icons.bookmark_border),
+            SizedBox(width: 9,),
+            Icon(Icons.notifications_none),
+            SizedBox(width: 9,),
+            Icon(Icons.chat_bubble_outline_outlined),
+            SizedBox(width: 17,),
           ],
         ),
         body: Column(
@@ -165,43 +173,50 @@ class FilterScreen extends ConsumerWidget {
         ),
         bottomNavigationBar: BottomAppBar(
           child: Container(
-            height: 50,
+            height: 70,
             margin: const EdgeInsets.all(10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                TextButton(
-                  style: TextButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: ColorConstants.primaryColor,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4)
+                Expanded(
+                  flex: 1,
+                  child: TextButton(
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.blue,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4)
+                      ),
+                      side: BorderSide(color: Colors.blue, width: 1)
                     ),
-                    side: BorderSide(color: ColorConstants.primaryColor, width: 2)
-                  ),
-                  onPressed: () {
-                    ref.read(profileFilterProvider.notifier).state = [];
-                    ref.read(cityFilterProvider.notifier).state = [];
-                    ref.read(maxDurationFilterProvider.notifier).state = 36;
-                  },
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 5,horizontal: 30),
-                    child: Text('Clear All', style: TextStyle(color: Colors.blue)),
+                    onPressed: () {
+                      ref.read(profileFilterProvider.notifier).state = [];
+                      ref.read(cityFilterProvider.notifier).state = [];
+                      ref.read(maxDurationFilterProvider.notifier).state = 36;
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 8,horizontal: 30),
+                      child: Text('Clear All', style: TextStyle(color: Colors.blue)),
+                    ),
                   ),
                 ),
-                TextButton(
-                  style: TextButton.styleFrom(
-                    backgroundColor: ColorConstants.primaryColor,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4)
+                SizedBox(width: 10,),
+                Expanded(
+                  flex: 1,
+                  child: TextButton(
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.blue.withOpacity(0.8),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4)
+                      ),
                     ),
-                  ),
-                  onPressed: () {
-                    context.goNamed(RouteConstants.homeScreenName, extra: 1);
-                  },
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 5,horizontal: 30),
-                    child: Text('Apply', style: TextStyle(color: Colors.white)),
+                    onPressed: () {
+                      context.goNamed(RouteConstants.homeScreenName, extra: 1);
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 8,horizontal: 30),
+                      child: Text('Apply', style: TextStyle(color: Colors.white)),
+                    ),
                   ),
                 ),
               ],

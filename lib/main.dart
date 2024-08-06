@@ -16,7 +16,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ProviderScope(
       child: MaterialApp.router(
-        theme: ThemeData.light(useMaterial3: false),
+        theme: ThemeData(
+            useMaterial3: false,
+          fontFamily: 'Inter-Regular',
+        ),
         // theme: OstelloTheme.lightTheme,
         debugShowCheckedModeBanner: false,
         routerConfig: _router,
