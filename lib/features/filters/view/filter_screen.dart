@@ -16,7 +16,7 @@ class FilterScreen extends ConsumerWidget {
     final selectedCityWatcher = ref.watch(cityFilterProvider);
     return PopScope(
       onPopInvoked: (_) {
-        context.pop(RouteConstants.homeScreenName);
+        context.goNamed(RouteConstants.homeScreenName);
       },
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -29,7 +29,7 @@ class FilterScreen extends ConsumerWidget {
               color: Colors.black.withOpacity(0.7),
               size: 20
           ),
-          leading: const Icon(Icons.arrow_back),
+          leading: IconButton(icon: Icon(Icons.arrow_back),onPressed: (){context.goNamed(RouteConstants.homeScreenName);},),
           titleSpacing: -6,
           leadingWidth: 55,
           actions: const [
